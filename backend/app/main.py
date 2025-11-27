@@ -1,11 +1,15 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import Union
+from app.api.routes import assets
+from app.database import engine
+from app.models import asset
 
-app = FASTAPI()
+asset.Base.metadata.create_all(bind=engine)
 
-class Item(electronic):
-  name: str
-  category: str
-  model: str
-  serial: int
+app = FastAPI(title="Asset Tracker API")
+
+app.include_router(assets.router, prefix="/api/assets", tags=["assets"])
+
+@app.get("/")
+def root():
+    return {"message": "Asset Tracker API is running"}
+
